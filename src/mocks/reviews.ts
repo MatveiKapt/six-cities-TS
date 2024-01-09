@@ -1,6 +1,6 @@
-import {Review} from '../types/review';
+import {ReviewType} from '../types/review';
 
-export const reviews: Review[] = [
+export const reviews: ReviewType[] = [
   {
     comment: '1 comment',
     date: 'Thu Nov 09 2023 13:24:51 GMT+0300 (Москва, стандартное время)',

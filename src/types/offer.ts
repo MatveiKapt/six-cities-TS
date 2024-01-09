@@ -1,9 +1,9 @@
-type City = {
-  location: LocationData;
+export type City = {
   name: string;
+  location: LocationData;
 }
 
-type LocationData = {
+export type LocationData = {
   latitude: number,
   longitude: number,
   zoom: number,

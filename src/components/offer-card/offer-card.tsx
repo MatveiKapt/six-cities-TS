@@ -18,16 +18,20 @@ const OfferCard = (props:OfferCardProps) => {
     onMouseLeave = () => void 0,
     place
   } = props;
-  const {price, title, type, isFavorite, rating, id} = offer;
+  const {price, title, type, rating, id} = offer;
   const handleMouseMove = () => {
     onMouseMove(id);
   };
 
   return(
     <article className={`${place!}__place-card place-card`} onMouseMove={handleMouseMove} onMouseLeave={onMouseLeave}>
+      {offer.isPremium && (
+        <div className="place-card__mark">
+          <span>Premium</span>
+        </div>)}
       <div className={`${place!}__image-wrapper place-card__image-wrapper`}>
         <Link to={`${AppRoute.Offer}/${offer.id}`}>
-          <img className="place-card__image" src="img/room.jpg" width="260" height="200" alt="Place image"/>
+          <img className="place-card__image" src={offer.previewImage} width="260" height="200" alt="Place image"/>
         </Link>
       </div>
       <div className="place-card__info">
@@ -36,7 +40,7 @@ const OfferCard = (props:OfferCardProps) => {
             <b className="place-card__price-value">&euro;{price}</b>
             <span className="place-card__price-text">&#47;&nbsp;night</span>
           </div>
-          <button className={`place-card__bookmark-button ${isFavorite ? 'place-card__bookmark-button--active' : ''} button`} type="button">
+          <button className={`place-card__bookmark-button ${offer.isFavorite ? 'place-card__bookmark-button--active' : ''} button`} type="button">
             <svg className="place-card__bookmark-icon" width="18" height="19">
               <use xlinkHref="#icon-bookmark"></use>
             </svg>
