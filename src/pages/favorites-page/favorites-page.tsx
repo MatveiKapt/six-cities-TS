@@ -1,14 +1,26 @@
 import React from 'react';
 import Logo from '../../components/logo/logo';
 import {Offer} from '../../types/offer';
-import OfferCard from '../../components/offer-card/offer-card';
+import Header from '../../components/header/header';
+import {useAppSelector} from '../../hooks';
+import {getFavoriteOffers, getIsFavoriteOffersLoading} from '../../store/offers-process/selectors';
+import Spinner from '../../components/spinner/spinner';
+import Bookmark from '../../components/bookmark/bookmark';
+import {AppRoute, STARS_COUNT} from '../../const';
+import {Link} from 'react-router-dom';
+import FavoritesEmptyPage from '../favorites-empty-page/favorites-empty-page';
 
-type FavoritesPagePropsType = {
-  offers: Offer[];
-}
+const FavoritesPage = () => {
+  const isFavoriteOffersLoading = useAppSelector(getIsFavoriteOffersLoading) as boolean;
+  const offers = useAppSelector(getFavoriteOffers);
 
-const FavoritesPage = (props: FavoritesPagePropsType) => {
-  const {offers} = props;
+  if (isFavoriteOffersLoading) {
+    return <Spinner />;
+  }
+
+  if (!offers.length) {
+    return <FavoritesEmptyPage />;
+  }
 
   const cities = offers.map((offer: Offer) => offer.city.name);
   const uniqueCities = [...new Set(cities)];
@@ -37,35 +49,7 @@ const FavoritesPage = (props: FavoritesPagePropsType) => {
         </svg>
       </div>
       <div className="page">
-        <header className="header">
-          <div className="container">
-            <div className="header__wrapper">
-              <div className="header__left">
-                <Logo />
-              </div>
-              <nav className="header__nav">
-                <ul className="header__nav-list">
-                  <li className="header__nav-item user">
-                    <a
-                      className="header__nav-link header__nav-link--profile"
-                      href="#"
-                    >
-                      <div className="header__avatar-wrapper user__avatar-wrapper"></div>
-                      <span className="header__user-name user__name">
-                      Oliver.conner@gmail.com
-                      </span>
-                    </a>
-                  </li>
-                  <li className="header__nav-item">
-                    <a className="header__nav-link" href="#">
-                      <span className="header__signout">Sign out</span>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-          </div>
-        </header>
+        <Header />
         <main className="page__main page__main--favorites">
           <div className="page__favorites-container container">
             <section className="favorites">
@@ -83,7 +67,37 @@ const FavoritesPage = (props: FavoritesPagePropsType) => {
                       </div>
                       <div className="favorites__places">
                         {
-                          offers.map((offer) => (offer.city.name === city && offer.isFavorite) && (<OfferCard place={'favorites'} offer={offer} key={offer.id}/>)
+                          offers.map((offer) => (offer.city.name === city && offer.isFavorite) && (
+                            <article key={offer.id} className="favorites__card place-card">
+                              {offer.isPremium && (
+                                <div className="place-card__mark">
+                                  <span>Premium</span>
+                                </div>)}
+                              <div className="favorites__image-wrapper place-card__image-wrapper">
+                                <Link to={`${AppRoute.Offer}/${offer.id}`}>
+                                  <img className="place-card__image" src={offer.previewImage} width="150" height="110" alt="Place image" />
+                                </Link>
+                              </div>
+                              <div className="favorites__card-info place-card__info">
+                                <div className="place-card__price-wrapper">
+                                  <div className="place-card__price">
+                                    <b className="place-card__price-value">&euro;{offer.price}</b>
+                                    <span className="place-card__price-text">&#47;&nbsp;night</span>
+                                  </div>
+                                  <Bookmark isFavorite={offer.isFavorite} offerId={offer.id} />
+                                </div>
+                                <div className="place-card__rating rating">
+                                  <div className="place-card__stars rating__stars">
+                                    <span style={{width: `${(offer.rating * 100) / STARS_COUNT}%`}}></span>
+                                    <span className="visually-hidden">Rating</span>
+                                  </div>
+                                </div>
+                                <h2 className="place-card__name">
+                                  <Link to={`${AppRoute.Offer}/${offer.id}`}>{offer.title}</Link>
+                                </h2>
+                                <p className="place-card__type">Apartment</p>
+                              </div>
+                            </article>)
                           )
                         }
                       </div>

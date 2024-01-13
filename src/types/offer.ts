@@ -1,3 +1,5 @@
+import {FavoriteStatus} from '../const';
+
 export type City = {
   name: string;
   location: LocationData;
@@ -33,4 +35,9 @@ export type Offer = {
   rating: number;
   title: string;
   type: 'apartment' | 'room' | 'house' | 'hotel';
+}
+
+export type SetFavoriteStatusData = {
+  offerId: Offer['id'];
+  favoriteStatus: FavoriteStatus;
 }

@@ -7,9 +7,7 @@ type SortingPropsType = {
 }
 
 const Sorting = ({currentSortType, onSortTypeClick}: SortingPropsType) => {
-
   const [isOpened, setIsOpened] = useState(false);
-
   const sortListLabelClickHandler = () => {
     setIsOpened(!isOpened);
   };
@@ -30,7 +28,7 @@ const Sorting = ({currentSortType, onSortTypeClick}: SortingPropsType) => {
       </span>
       <ul className={`places__options places__options--custom ${isOpened ? 'places__options--opened' : ''}`}>
         {Object.values(SortTypes)
-          .map((item, index) => (
+          .map((item) => (
             <li
               key={item}
               className={`places__option ${currentSortType === item ? 'places__option--active' : ''}`}

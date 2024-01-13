@@ -1,14 +1,25 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import Logo from '../logo/logo';
-import {useAppSelector} from '../../hooks';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {AppRoute, AuthorizationStatus} from '../../const';
 import {Link} from 'react-router-dom';
+import {getAuthorizationStatus, getUser} from '../../store/user-process/selectors';
+import {getFavoriteOffers} from '../../store/offers-process/selectors';
+import {logoutUser} from '../../store/api-actions';
 
 const Header = () => {
-  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
-  const user = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const user = useAppSelector(getUser);
+  const favoriteOffers = useAppSelector(getFavoriteOffers);
 
-  const isLogged = () => authorizationStatus === AuthorizationStatus.Auth;
+  const isLogged = useMemo(() => authorizationStatus === AuthorizationStatus.Auth, [authorizationStatus]);
+
+  const handleLogoutButtonClick = () => {
+    if (isLogged) {
+      dispatch(logoutUser());
+    }
+  };
 
   return (
     <header className="header">
@@ -20,7 +31,7 @@ const Header = () => {
           <nav className="header__nav">
             <ul className="header__nav-list">
               {
-                isLogged() && (
+                isLogged && (
                   <li className="header__nav-item user">
                     <Link
                       className="header__nav-link header__nav-link--profile"
@@ -30,13 +41,15 @@ const Header = () => {
                       <span className="header__user-name user__name">
                         {user}
                       </span>
-                      <span className="header__favorite-count">3</span>
+                      <span className="header__favorite-count">{favoriteOffers.length}</span>
                     </Link>
                   </li>)
               }
               <li className="header__nav-item">
                 <a className="header__nav-link" href="#">
-                  <span className="header__signout">{isLogged() ? 'Sign out' : <Link to={AppRoute.Login}>Sign in</Link>}</span>
+                  <span className="header__signout" onClick={handleLogoutButtonClick}>
+                    {isLogged ? 'Sign out' : <Link to={AppRoute.Login}>Sign in</Link>}
+                  </span>
                 </a>
               </li>
             </ul>

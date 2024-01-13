@@ -30,7 +30,7 @@ const Review = ({review}: ReviewPropsType) => (
       <p className="reviews__text">
         {review.comment}
       </p>
-      <time className="reviews__time" dateTime="2019-04-24">
+      <time className="reviews__time" dateTime={review.date}>
         {review.date}
       </time>
     </div>

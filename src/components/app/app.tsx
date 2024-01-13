@@ -5,23 +5,17 @@ import OfferPage from '../../pages/offer-page/offer-page';
 import FavoritesPage from '../../pages/favorites-page/favorites-page';
 import PrivateRoute from '../private-route/private-route';
 import MainPage from '../../pages/main-page/main-page';
-import {Offer} from '../../types/offer';
 import history from '../../history';
 import NotFound from '../../pages/not-found/not-found';
 
-type AppPropsType = {
-  offers: Offer[];
-};
-
-function App(props:AppPropsType): JSX.Element {
-  const {offers} = props;
+function App(): JSX.Element {
   return (
     <HistoryRouter history={history}>
       <Routes>
         <Route index path={AppRoute.Main} element={<MainPage />} />
         <Route path={AppRoute.Login} element={<LoginPage />} />
         <Route path={`${AppRoute.Offer}/:id`} element={<OfferPage />} />
-        <Route path={AppRoute.Favorites} element={<PrivateRoute><FavoritesPage offers={offers}/></PrivateRoute>} />
+        <Route path={AppRoute.Favorites} element={<PrivateRoute><FavoritesPage /></PrivateRoute>} />
         <Route path={'*'} element={<NotFound />} />
       </Routes>
     </HistoryRouter>

@@ -1,27 +1,30 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {AppDispatch, State} from '../types/state';
-import {AxiosError, AxiosInstance} from 'axios';
+import {AxiosError, AxiosInstance, AxiosResponse} from 'axios';
 import {ApiRoute, AppRoute, HttpCode} from '../const';
-import { Offer } from '../types/offer';
+import {Offer, SetFavoriteStatusData} from '../types/offer';
 import {User, UserAuth} from '../types/user';
 import {History} from 'history';
-import {saveToken} from '../services/token';
+import {dropToken, saveToken} from '../services/token';
 import {ReviewForSend, ReviewType} from '../types/review';
+
+const Action = {
+  FETCH_OFFERS: 'offers/fetchOffers',
+  FETCH_NEARBY_OFFERS: 'offers/fetchNearbyOffers',
+  FETCH_OFFER_BY_ID: 'offers/fetchOfferById',
+  FETCH_FAVORITE_OFFERS: 'offers/fetchFavoriteOffers',
+  SET_FAVORITE_STATUS: 'offers/setFavoriteStatus',
+  FETCH_REVIEWS: 'reviews/fetchReviews',
+  CHECK_USER_AUTH: 'user/checkAuth',
+  USER_LOGIN: 'user/login',
+  USER_LOGOUT: 'user/logout',
+  POST_REVIEW: 'reviews/postReview'
+};
 
 type Extra = {
   api: AxiosInstance;
   history: History;
 }
-
-const Action = {
-  FETCH_OFFERS: 'offers/fetchOffers',
-  FETCH_NEARBY_OFFERS: 'offers/fetchNearbyOffers',
-  FETCH_OFFER_BY_ID: 'offer/fetchOfferById',
-  FETCH_REVIEWS: 'offer/fetchComments',
-  CHECK_USER_AUTH: 'user/checkAuth',
-  USER_LOGIN: 'user/login',
-  POST_REVIEW: 'review/postComment'
-};
 
 export const fetchOffersAction = createAsyncThunk<Offer[], undefined, {
   dispatch: AppDispatch;
@@ -58,6 +61,20 @@ export const loginUserAction = createAsyncThunk<User['email'], UserAuth, {extra:
     saveToken(token);
     history.push(AppRoute.Main);
     return email;
+  }
+);
+
+export const logoutUser = createAsyncThunk<AxiosResponse, undefined, {extra: Extra}>(
+  Action.USER_LOGOUT,
+  async (_arg, {extra}) => {
+    const {api, history} = extra;
+
+    const {data} = await api.delete<AxiosResponse>(ApiRoute.Logout);
+
+    dropToken();
+    history.push(AppRoute.Main);
+
+    return data;
   }
 );
 
@@ -110,5 +127,37 @@ export const postReviewAction = createAsyncThunk<ReviewType[], ReviewForSend, {e
     const {data} = await api.post<ReviewType[]>(`${ApiRoute.Reviews}/${id.toString()}`, {comment, rating});
 
     return data;
+  }
+);
+
+export const fetchFavoriteOffers = createAsyncThunk<Offer[], undefined, {extra: Extra}>(
+  Action.FETCH_FAVORITE_OFFERS,
+  async (_arg, {extra}): Promise<Offer[]> => {
+    const {api} = extra;
+
+    const {data} = await api.get<Offer[]>(ApiRoute.Favorites);
+
+    return data;
+  }
+);
+
+export const setFavoriteStatus = createAsyncThunk<Offer, SetFavoriteStatusData, {extra: Extra}>(
+  Action.SET_FAVORITE_STATUS,
+  async ({offerId, favoriteStatus}, {extra}): Promise<Offer> => {
+    const {api, history} = extra;
+
+    try {
+      const {data} = await api.post<Offer>(`${ApiRoute.Favorites}/${String(offerId)}/${String(favoriteStatus)}`);
+
+      return data;
+    } catch (error) {
+      const axiosError = error as AxiosError;
+
+      if (axiosError.response?.status === HttpCode.Unauthorized) {
+        history.push(AppRoute.Login);
+      }
+
+      return Promise.reject(error);
+    }
   }
 );

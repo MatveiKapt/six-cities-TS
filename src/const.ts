@@ -20,6 +20,7 @@ export enum ApiRoute {
 
 export enum HttpCode {
   NotFound = 404,
+  Unauthorized = 401,
 }
 
 
@@ -34,6 +35,13 @@ export enum OffersType {
   room = 'Private Room',
   house = 'House',
   hotel = 'Hotel',
+}
+
+export enum NameSpace {
+  Offers = 'OFFERS',
+  User = 'USER',
+  Reviews = 'REVIEWS',
+  Main = 'MAIN',
 }
 
 export const STARS_COUNT = 5;
@@ -80,6 +88,11 @@ export const CityLocation: { [key in CityName]: LocationData } = {
     zoom: 13,
   },
 };
+
+export enum FavoriteStatus {
+  Favorite = 1,
+  NotFavorite = 0,
+}
 
 export const URL_MARKER_DEFAULT = 'img/pin.svg';
 export const URL_MARKER_CURRENT = 'img/pin-active.svg';

@@ -1,6 +1,12 @@
 import React, {useEffect} from 'react';
-import Logo from '../../components/logo/logo';
-import {AppRoute, AuthorizationStatus, cities, CityLocation, OffersType, STARS_COUNT} from '../../const';
+import {
+  AppRoute,
+  AuthorizationStatus,
+  cities,
+  CityLocation,
+  OffersType,
+  STARS_COUNT
+} from '../../const';
 import {Link, useParams} from 'react-router-dom';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import {useAppDispatch, useAppSelector} from '../../hooks';
@@ -9,17 +15,27 @@ import Spinner from '../../components/spinner/spinner';
 import {fetchReviews, fetchNearbyOffers, fetchOfferById} from '../../store/api-actions';
 import Map from '../../components/map/Map';
 import ReviewForm from '../../components/review-form/review-form';
+import Header from '../../components/header/header';
+import {
+  getIsNearbyOffersLoading,
+  getIsOfferLoading,
+  getNearbyOffers,
+  getOffer
+} from '../../store/offers-process/selectors';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
+import {getIsReviewsLoading, getReviews} from '../../store/reviews-process/selectors';
+import Bookmark from '../../components/bookmark/bookmark';
 
 const OfferPage = () => {
   const params = useParams();
   const dispatch = useAppDispatch();
-  const isOfferLoading = useAppSelector((state) => state.isOfferLoading);
-  const isNearbyOffersLoading = useAppSelector((state) => state.isNearbyOffersLoading);
-  const isReviewsLoading = useAppSelector((state) => state.isReviewsLoading);
-  const offer = useAppSelector((state) => state.offer);
-  const nearbyOffers = useAppSelector((state) => state.nearbyOffers);
-  const reviews = useAppSelector((state) => state.reviews);
-  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+  const isOfferLoading = useAppSelector(getIsOfferLoading);
+  const isNearbyOffersLoading = useAppSelector(getIsNearbyOffersLoading);
+  const isReviewsLoading = useAppSelector(getIsReviewsLoading);
+  const offer = useAppSelector(getOffer);
+  const nearbyOffers = useAppSelector(getNearbyOffers);
+  const reviews = useAppSelector(getReviews);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
 
   useEffect(() => {
@@ -86,35 +102,7 @@ const OfferPage = () => {
         </svg>
       </div>
       <div className="page">
-        <header className="header">
-          <div className="container">
-            <div className="header__wrapper">
-              <div className="header__left">
-                <Logo />
-              </div>
-              <nav className="header__nav">
-                <ul className="header__nav-list">
-                  <li className="header__nav-item user">
-                    <a
-                      className="header__nav-link header__nav-link--profile"
-                      href="#"
-                    >
-                      <div className="header__avatar-wrapper user__avatar-wrapper"></div>
-                      <span className="header__user-name user__name">
-                    Oliver.conner@gmail.com
-                      </span>
-                    </a>
-                  </li>
-                  <li className="header__nav-item">
-                    <a className="header__nav-link" href="#">
-                      <span className="header__signout">Sign out</span>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-          </div>
-        </header>
+        <Header />
         <main className="page__main page__main--property">
           <section className="property">
             <div className="property__gallery-container container">
@@ -142,15 +130,7 @@ const OfferPage = () => {
                   <h1 className="property__name">
                     {title}
                   </h1>
-                  <button
-                    className={`property__bookmark-button button ${isFavorite ? 'place-card__bookmark-button--active' : ''}`}
-                    type="button"
-                  >
-                    <svg className="property__bookmark-icon" width={31} height={33}>
-                      <use xlinkHref="#icon-bookmark" />
-                    </svg>
-                    <span className="visually-hidden">To bookmarks</span>
-                  </button>
+                  <Bookmark isFavorite={isFavorite} offerId={id} place={'property'}/>
                 </div>
                 <div className="property__rating rating">
                   <div className="property__stars rating__stars">
