@@ -25,4 +25,4 @@ export const reviewsProcess = createSlice({
         state.reviews = action.payload;
       });
   }
-})
+});

@@ -11,7 +11,7 @@ import {Link} from 'react-router-dom';
 import FavoritesEmptyPage from '../favorites-empty-page/favorites-empty-page';
 
 const FavoritesPage = () => {
-  const isFavoriteOffersLoading = useAppSelector(getIsFavoriteOffersLoading) as boolean;
+  const isFavoriteOffersLoading = useAppSelector(getIsFavoriteOffersLoading);
   const offers = useAppSelector(getFavoriteOffers);
 
   if (isFavoriteOffersLoading) {

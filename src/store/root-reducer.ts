@@ -10,4 +10,4 @@ export const rootReducer = combineReducers({
   [NameSpace.Offers]: offersProcess.reducer,
   [NameSpace.Reviews]: reviewsProcess.reducer,
   [NameSpace.Main]: mainProcess.reducer,
-})
+});
