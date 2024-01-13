@@ -5,7 +5,7 @@ import {
   fetchFavoriteOffers,
   fetchNearbyOffers,
   fetchOfferById,
-  fetchOffersAction,
+  fetchOffersAction, logoutUser,
   setFavoriteStatus
 } from '../api-actions';
 
@@ -71,6 +71,13 @@ export const offersProcess = createSlice({
         } else {
           state.favoriteOffers = state.favoriteOffers.filter((favoriteOffer) => favoriteOffer.id !== updateOffer.id);
         }
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.favoriteOffers = [];
+
+        state.offers.forEach((offer) => {
+          offer.isFavorite = false;
+        });
       });
   }
 });
